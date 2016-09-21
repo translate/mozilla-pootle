@@ -17,4 +17,5 @@ class MozillaPootleConfig(AppConfig):
     verbose_name = "Mozilla Pootle extensions and plugins"
 
     def ready(self):
-        importlib.import_module("pootle_fs.models")
+        importlib.import_module("mozilla_pootle.models")
+        importlib.import_module("mozilla_pootle.providers")
