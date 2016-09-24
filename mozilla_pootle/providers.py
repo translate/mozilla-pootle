@@ -8,12 +8,18 @@
 
 from collections import OrderedDict
 
-from pootle.core.delegate import format_registration
+from pootle.core.delegate import format_registration, url_patterns
 from pootle.core.plugin import provider
 
 from .formats import MOZILLA_FORMATS
+from .urls import urlpatterns
 
 
 @provider(format_registration)
 def register_formats(**kwargs_):
     return OrderedDict(MOZILLA_FORMATS)
+
+
+@provider(url_patterns)
+def vf_url_provider(**kwargs_):
+    return dict(vfolders=urlpatterns)
