@@ -1,0 +1,4 @@
+{
+     "editor": ["addFormat.js"],
+     "l20nAdaptor": ["editor/formats/l20n/L20nAdaptor.js"],
+}
