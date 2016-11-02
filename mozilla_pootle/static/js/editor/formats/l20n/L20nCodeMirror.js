@@ -8,7 +8,7 @@
 
 import React from 'react';
 
-import CodeMirror from '../../../shared/components/CodeMirror';
+import CodeMirror from 'pootle/shared/components/CodeMirror';
 
 
 const L20nCodeMirror = React.createClass({
@@ -17,7 +17,7 @@ const L20nCodeMirror = React.createClass({
   render() {
     return (
       <CodeMirror
-        markup="javascript"
+        markup="htmlmixed"
         {...this.state}
         {...this.props}
       />

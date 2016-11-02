@@ -1,4 +1,3 @@
 {
-     "editor": ["addFormat.js"],
-     "l20nAdaptor": ["editor/formats/l20n/L20nAdaptor.js"],
+     "mozilla_pootle": ["index.js"]
 }

@@ -8,15 +8,15 @@
 
 
 function loadL20nFormatAdaptor(props, onLoad) {
-  require.ensure(['editor/formats/l20n/L20nAdapror.js'], (require) => {
-    const adaptor = require('editor/formats/l20n/L20nAdapror.js');
+  require.ensure(['./formats/l20n/L20nAdaptor.js'], (require) => {
+    const adaptor = require('./formats/l20n/L20nAdaptor.js');
     onLoad(props, adaptor.default);
   }); 
 }
 
-export function getFormats() {
-  return {
+export function addFormats() {
+  PTL.editor.addFormats({
     ftl: loadL20nFormatAdaptor,
     l20n: loadL20nFormatAdaptor,
-  };
+  });
 }
