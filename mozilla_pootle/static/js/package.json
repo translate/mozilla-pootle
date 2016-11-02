@@ -1,0 +1,22 @@
+{
+  "name": "mozilla-pootle",
+  "version": "0.0.0",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/translate/mozilla-pootle.git"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "stylelint": "stylelint --config=stylelint.json ../css/**/*.css **/*.css",
+    "test": "mocha --compilers js:babel-register \"./{,!(node_modules)/**/}*.test.js\""
+  },
+  "devDependencies": {
+    "babel-polyfill": "^6.13.0"
+  },
+  "dependencies": {
+    "fs": "^0.0.2",
+    "l20n": "https://github.com/ta2-1/l20n.js.git#get_all_plural_forms"
+  }
+}
+
