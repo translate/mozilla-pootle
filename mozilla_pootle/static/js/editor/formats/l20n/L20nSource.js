@@ -8,9 +8,9 @@
 
 import React from 'react';
 
-import { t } from 'utils/i18n';
+import { t } from 'pootle/shared/utils/i18n';
 
-import UnitSource from '../../components/UnitSource';
+import UnitSource from 'pootle/editor/components/UnitSource';
 import { getL20nData } from './utils';
 
 

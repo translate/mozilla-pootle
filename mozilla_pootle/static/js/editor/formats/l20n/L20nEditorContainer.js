@@ -8,11 +8,11 @@
 
 import React from 'react';
 
-import { t } from 'utils/i18n';
-import { qAll } from 'utils/dom';
+import { t } from 'pootle/shared/utils/i18n';
+import { qAll } from 'pootle/shared/utils/dom';
 
-import Editor from '../../components/Editor';
-import RawFontTextarea from '../../components/RawFontTextarea';
+import Editor from 'pootle/editor/components/Editor';
+import RawFontTextarea from 'pootle/editor/components/RawFontTextarea';
 
 import L20nCodeMirror from './L20nCodeMirror';
 
