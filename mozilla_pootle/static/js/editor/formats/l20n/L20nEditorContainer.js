@@ -18,9 +18,11 @@ import L20nCodeMirror from './L20nCodeMirror';
 
 import {
   dumpL20nPlurals,
+  dumpL20nTraits,
   dumpL20nValue,
-  getL20nEmptyPluralsEntity,
   getL20nData,
+  getL20nEmptyPluralsEntity,
+  getL20nEmptyTraitsEntity,
 } from './utils';
 
 
@@ -95,6 +97,16 @@ const L20nEditorContainer = React.createClass({
           hasL20nPlurals: true,
           l20nValues: this.l20nInitialValues,
         });
+      } else if (l20nSourceData.hasL20nTraits) {
+        const l20nEmptyEntity = getL20nEmptyTraitsEntity(l20nSourceData.traitLabels);
+        this.l20nUnitEntity = l20nEmptyEntity.unitEntity;
+        this.l20nInitialValues = new Array(l20nSourceData.traitLabels.length).fill('');
+        this.traitLabels = l20nSourceData.traitLabels;
+
+        this.setState({
+          hasL20nPlurals: true,
+          l20nValues: this.l20nInitialValues,
+        });
       } else if (!l20nSourceData.hasSimpleValue) {
         this.setState({
           isRichModeEnabled: true,
@@ -104,6 +116,15 @@ const L20nEditorContainer = React.createClass({
       this.l20nUnitEntity = l20nData.unitEntity;
       this.l20nInitialValues = l20nData.unitValues;
       this.pluralForms = l20nData.pluralForms;
+
+      this.setState({
+        hasL20nPlurals: true,
+        l20nValues: this.l20nInitialValues,
+      });
+    } else if (l20nData.hasL20nTraits) {
+      this.l20nUnitEntity = l20nData.unitEntity;
+      this.l20nInitialValues = l20nData.unitValues;
+      this.traitLabels = l20nData.traitLabels;
 
       this.setState({
         hasL20nPlurals: true,
@@ -130,10 +151,16 @@ const L20nEditorContainer = React.createClass({
   },
 
   getPluralFormName(index) {
-    if (this.state.hasL20nPlurals
-        && this.l20nInitialValues.length === this.pluralForms.length) {
-      return t('Plural form [%(name)s]', { name: this.pluralForms[index] });
+    if (this.state.hasL20nPlurals) {
+      if (!!this.pluralForms &&
+          this.l20nInitialValues.length === this.pluralForms.length) {
+        return t('Plural form [%(name)s]', { name: this.pluralForms[index] });
+      } else if (!!this.traitLabels &&
+                 this.l20nInitialValues.length === this.traitLabels.length) {
+        return t('[%(label)s]', { label: this.traitLabels[index] });
+      }
     }
+
     return '';
   },
 
@@ -145,10 +172,23 @@ const L20nEditorContainer = React.createClass({
     const newValues = this.state.l20nValues.slice();
     newValues[i] = value;
 
-    if (this.state.hasL20nPlurals && !this.state.isRichModeEnabled) {
+    if (this.state.hasL20nPlurals && !!this.pluralForms && !this.state.isRichModeEnabled) {
       try {
         this.setState({
           values: dumpL20nPlurals(newValues, this.l20nUnitEntity),
+          l20nValues: newValues,
+        }, this.props.onChange);
+      } catch (e) {
+        if (e.name === 'L20nEditorError') {
+          this.setState({ l20nValues: newValues });
+        } else {
+          throw e;
+        }
+      }
+    } else if (this.state.hasL20nPlurals && !!this.traitLabels && !this.state.isRichModeEnabled) {
+      try {
+        this.setState({
+          values: dumpL20nTraits(newValues, this.l20nUnitEntity),
           l20nValues: newValues,
         }, this.props.onChange);
       } catch (e) {

@@ -45,9 +45,15 @@ const L20nSource = React.createClass({
     const l20nData = getL20nData(this.props.values);
 
     if (l20nData.hasL20nPlurals) {
+      this.pluralForms = l20nData.pluralForms;
       this.setState({
         values: l20nData.unitValues,
-        pluralForms: l20nData.pluralForms,
+        hasPlurals: true,
+      });
+    } else if (l20nData.hasL20nTraits) {
+      this.traitLabels = l20nData.traitLabels;
+      this.setState({
+        values: l20nData.unitValues,
         hasPlurals: true,
       });
     } else if (l20nData.hasSimpleValue) {
@@ -71,13 +77,21 @@ const L20nSource = React.createClass({
     } else {
       const l20nData = getL20nData(nextProps.values);
       if (l20nData.hasL20nPlurals) {
+        this.pluralForms = l20nData.pluralForms;
         this.setState({
           values: l20nData.unitValues,
-          pluralForms: l20nData.pluralForms,
           hasPlurals: true,
           isRichModeEnabled: false,
         });
-      } else if (l20nData.hasSimpleValue) {
+      } else if (l20nData.hasL20nTraits) {
+        this.traitLabels = l20nData.traitLabels;
+        this.setState({
+          values: l20nData.unitValues,
+          hasPlurals: true,
+          isRichModeEnabled: false,
+        });
+      }
+      else if (l20nData.hasSimpleValue) {
         this.setState({
           values: l20nData.unitValues,
           isRichModeEnabled: false,
@@ -91,9 +105,12 @@ const L20nSource = React.createClass({
   },
 
   getPluralFormName(index) {
-    if (this.state.pluralForms !== undefined &&
-        this.state.pluralForms.length === this.state.values.length) {
-      return t('Plural form [%(key)s]', { key: this.state.pluralForms[index] });
+    if (this.pluralForms !== undefined &&
+        this.pluralForms.length === this.state.values.length) {
+      return t('Plural form [%(key)s]', { key: this.pluralForms[index] });
+    } else if (this.traitLabels !== undefined &&
+               this.traitLabels.length === this.state.values.length) {
+      return t('[%(key)s]', { key: this.traitLabels[index] });
     }
     return '';
   },

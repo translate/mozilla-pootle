@@ -44,7 +44,7 @@ function parseL20nValue(value) {
 
 function setL20nPlurals(data) {
   const value = data.unitEntity.value;
-  const hasL20nPlurals = (value !== undefined &&
+  const hasL20nPlurals = (!!value &&
                           value.elements.length === 1 &&
                           value.elements[0].type === 'Placeable' &&
                           value.elements[0].expressions[0].type === 'SelectExpression' &&
@@ -65,6 +65,26 @@ function setL20nPlurals(data) {
     assign(data, { unitValues, pluralForms });
   }
   return hasL20nPlurals;
+}
+
+
+function setL20nTraits(data) {
+  const traits = data.unitEntity.traits;
+  const hasL20nTraits = (traits !== undefined &&
+                     traits !== null &&
+                     traits.length > 0);
+  assign(data, { hasL20nTraits });
+  if (hasL20nTraits) {
+    const unitValues = [];
+    const traitLabels = [];
+    for (let i = 0; i < traits.length; i++) {
+      unitValues.push(traits[i].value.source);
+      let key = FTLASTSerializer.dumpExpression(traits[i].key);
+      traitLabels.push(key);
+    }
+    assign(data, { unitValues, traitLabels });
+  }
+  return hasL20nTraits;
 }
 
 
@@ -95,6 +115,10 @@ export function getL20nData(values, nplurals) {
     return result;
   }
 
+  if (setL20nTraits(result)) {
+    return result;
+  }
+
   setSimpleValue(result);
 
   return result;
@@ -122,6 +146,25 @@ export function dumpL20nPlurals(values, l20nUnitEntity) {
 }
 
 
+export function dumpL20nTraits(values, l20nUnitEntity) {
+  if (values.every(value => value === '')) {
+    return '';
+  } else if (values.some(value => value === '')) {
+    throw new L20nEditorError('All traits should be filled.');
+  }
+  for (let i = 0; i < values.length; i++) {
+    const textElementEntity = getTextElementL20nEntity(values[i]);
+    l20nUnitEntity.traits[i].value = textElementEntity.value;
+  }
+
+  try {
+    return [FTLASTSerializer.dumpEntity(l20nUnitEntity).replace('unit = ', '') + '\n'];
+  } catch (e) {
+    throw new L20nEditorError(e.message);
+  }
+}
+
+
 export function dumpL20nValue(value) {
   const l20nUnitEntity = getTextElementL20nEntity(value);
 
@@ -140,6 +183,15 @@ export function getL20nEmptyPluralsEntity(localeCode) {
   const unitEntity = FTLASTParser.parseResource(unit)[0].body[0];
   return { unitEntity, pluralForms };
 }
+
+
+export function getL20nEmptyTraitsEntity(traitLabels) {
+  const traitsPattern = traitLabels.map((x) => `[${x}] val`).join('\n');
+  const unit = `unit =\n${traitsPattern}\n`;
+  const unitEntity = FTLASTParser.parseResource(unit)[0].body[0];
+  return { unitEntity, traitLabels };
+}
+
 
 
 export { L20nEditorError as L20nEditorError };
