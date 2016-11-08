@@ -30,4 +30,5 @@ setup(
     ],
     keywords='mozilla pootle extensions and plugins',
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+    include_package_data=True,
     install_requires=['pootle'])
