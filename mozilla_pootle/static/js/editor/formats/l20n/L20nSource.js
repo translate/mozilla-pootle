@@ -98,9 +98,9 @@ const L20nSource = React.createClass({
       return t('Plural form [%(key)s]', { key: this.pluralForms[index] });
     } else if (this.traitLabels !== undefined &&
                this.traitLabels.length === this.state.values.length) {
-      return t('[%(key)s]', { key: this.traitLabels[index] });
+      return `[${this.traitLabels[index]}]`;
     }
-    return '';
+    return `[${index}]`;
   },
 
   render() {

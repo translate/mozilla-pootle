@@ -8,11 +8,13 @@
 
 import L20nEditorContainer from './L20nEditorContainer';
 import L20nSource from './L20nSource';
+import L20nViewUnit from './L20nViewUnit';
 
 
 const L20nAdaptor = {
   editorComponent: L20nEditorContainer,
   unitSourceComponent: L20nSource,
+  viewUnitComponent: L20nViewUnit,
 };
 
 
