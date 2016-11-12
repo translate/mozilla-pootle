@@ -9,22 +9,10 @@
 import React from 'react';
 
 import { t } from 'pootle/shared/utils/i18n';
-
 import UnitSource from 'pootle/editor/components/UnitSource';
+
+import InnerPre from './InnerPre';
 import { getL20nData } from './utils';
-
-
-const InnerPre = ({ sourceValue }) => (
-  <pre
-    dangerouslySetInnerHTML={
-      { __html: sourceValue }
-    }
-  />
-);
-
-InnerPre.propTypes = {
-  sourceValue: React.PropTypes.string.isRequired,
-};
 
 
 const L20nSource = React.createClass({
