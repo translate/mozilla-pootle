@@ -10,10 +10,13 @@ import L20nEditorContainer from './L20nEditorContainer';
 import L20nSource from './L20nSource';
 import L20nViewUnit from './L20nViewUnit';
 
+import SuggestionValue from 'pootle/editor/components/SuggestionValue';
+
 
 const L20nAdaptor = {
   editorComponent: L20nEditorContainer,
   unitSourceComponent: L20nSource,
+  suggestionValueComponent: SuggestionValue,
   viewUnitComponent: L20nViewUnit,
 };
 
