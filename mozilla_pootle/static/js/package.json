@@ -12,7 +12,12 @@
     "test": "mocha --compilers js:babel-register \"./{,!(node_modules)/**/}*.test.js\""
   },
   "devDependencies": {
-    "babel-polyfill": "^6.13.0"
+    "babel-polyfill": "^6.13.0",
+    "babel-preset-es2015": "^6.0.0",
+    "babel-register": "^6.5.1",
+    "expect": "^1.14.0",
+    "mocha": "^3.0.2",
+    "webpack": "^1.9.8"
   },
   "dependencies": {
     "fs": "^0.0.2",
