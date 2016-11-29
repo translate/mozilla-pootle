@@ -158,7 +158,7 @@ export function dumpL20nTraits(values, l20nUnitEntity) {
   }
 
   try {
-    return [FTLASTSerializer.dumpEntity(l20nUnitEntity).replace('unit = ', '') + '\n'];
+    return [FTLASTSerializer.dumpEntity(l20nUnitEntity).replace('unit = ', '')];
   } catch (e) {
     throw new L20nEditorError(e.message);
   }
