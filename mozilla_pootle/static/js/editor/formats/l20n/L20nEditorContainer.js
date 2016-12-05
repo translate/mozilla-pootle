@@ -16,15 +16,7 @@ import RawFontTextarea from 'pootle/editor/components/RawFontTextarea';
 
 import L20nCodeMirror from './L20nCodeMirror';
 
-import {
-  dumpL20nPlurals,
-  dumpL20nTraits,
-  dumpL20nValue,
-  getL20nData,
-  getL20nEmptyPluralsEntity,
-  getL20nEmptyTraitsEntity,
-} from './utils';
-
+import L20nUnit from './L20nUnit';
 
 const L20nEditorContainer = React.createClass({
 
@@ -66,7 +58,6 @@ const L20nEditorContainer = React.createClass({
       hasL20nPlurals: false,
       isRichModeEnabled: false,
       values: this.props.initialValues,
-      l20nValues: this.props.initialValues,
     };
   },
 
@@ -78,68 +69,16 @@ const L20nEditorContainer = React.createClass({
   },
 
   componentWillMount() {
-    const l20nData = getL20nData(
-      this.props.initialValues,
-      this.props.targetNplurals
-    );
-    if (l20nData.isEmpty) {
-      const l20nSourceData = getL20nData(
-        this.props.sourceValues,
-        this.props.sourceValues.length
-      );
-      if (l20nSourceData.hasL20nPlurals) {
-        const l20nEmptyEntity = getL20nEmptyPluralsEntity(this.props.currentLocaleCode);
-        this.l20nUnitEntity = l20nEmptyEntity.unitEntity;
-        this.l20nInitialValues = new Array(l20nEmptyEntity.pluralForms.length).fill('');
-        this.pluralForms = l20nEmptyEntity.pluralForms;
+    const value = this.props.initialValues[0];
 
-        this.setState({
-          hasL20nPlurals: true,
-          l20nValues: this.l20nInitialValues,
-        });
-      } else if (l20nSourceData.hasL20nTraits) {
-        const l20nEmptyEntity = getL20nEmptyTraitsEntity(l20nSourceData.traitLabels);
-        this.l20nUnitEntity = l20nEmptyEntity.unitEntity;
-        this.l20nInitialValues = new Array(l20nSourceData.traitLabels.length).fill('');
-        this.traitLabels = l20nSourceData.traitLabels;
-
-        this.setState({
-          hasL20nPlurals: true,
-          l20nValues: this.l20nInitialValues,
-        });
-      } else if (!l20nSourceData.hasSimpleValue) {
-        this.setState({
-          isRichModeEnabled: true,
-        });
-      }
-    } else if (l20nData.hasL20nPlurals) {
-      this.l20nUnitEntity = l20nData.unitEntity;
-      this.l20nInitialValues = l20nData.unitValues;
-      this.pluralForms = l20nData.pluralForms;
-
-      this.setState({
-        hasL20nPlurals: true,
-        l20nValues: this.l20nInitialValues,
-      });
-    } else if (l20nData.hasL20nTraits) {
-      this.l20nUnitEntity = l20nData.unitEntity;
-      this.l20nInitialValues = l20nData.unitValues;
-      this.traitLabels = l20nData.traitLabels;
-
-      this.setState({
-        hasL20nPlurals: true,
-        l20nValues: this.l20nInitialValues,
-      });
-    } else if (l20nData.hasSimpleValue) {
-      this.l20nInitialValues = l20nData.unitValues;
-      this.setState({
-        l20nValues: l20nData.unitValues,
-      });
+    if (value === '') {
+      this.l20nUnit = new L20nUnit();
+      this.l20nUnit.initEmptyBySource(this.props.sourceValues[0], this.props.currentLocaleCode);
     } else {
-      this.setState({
-        isRichModeEnabled: true,
-      });
+      this.l20nUnit = new L20nUnit(value);
     }
+    this.l20nInitialValues = this.l20nUnit.state.values;
+    this.setState(this.l20nUnit.state.getEditorState());
   },
 
   componentDidMount() {
@@ -151,22 +90,16 @@ const L20nEditorContainer = React.createClass({
   },
 
   getAreaValues(values) {
-    const l20nData = getL20nData(values);
-    if (l20nData.hasL20nPlurals || l20nData.hasL20nTraits || l20nData.hasSimpleValue) {
-      return l20nData.unitValues;
+    if (values[0] === '') {
+      return values;
     }
-    return values;
+    const l20nUnit = L20nUnit(values[0]);
+    return l20nUnit.state.values;
   },
 
   getPluralFormName(index) {
-    if (this.state.hasL20nPlurals) {
-      if (!!this.pluralForms &&
-          this.l20nInitialValues.length === this.pluralForms.length) {
-        return t('Plural form [%(name)s]', { name: this.pluralForms[index] });
-      } else if (!!this.traitLabels &&
-                 this.l20nInitialValues.length === this.traitLabels.length) {
-        return t('[%(label)s]', { label: this.traitLabels[index] });
-      }
+    if (this.l20nUnit.state.getPluralFormName) {
+      return this.l20nUnit.state.getPluralFormName(index);
     }
 
     return '';
@@ -177,51 +110,14 @@ const L20nEditorContainer = React.createClass({
   },
 
   handleChange(i, value) {
-    const newValues = this.state.l20nValues.slice();
-    newValues[i] = value;
-
-    if (this.state.hasL20nPlurals && !!this.pluralForms && !this.state.isRichModeEnabled) {
-      try {
-        const values = dumpL20nPlurals(newValues, this.l20nUnitEntity);
-        this.setState({
-          values,
-          l20nValues: newValues,
-        }, () => this.props.onChange(values));
-      } catch (e) {
-        if (e.name === 'L20nEditorError') {
-          this.setState({ l20nValues: newValues });
-        } else {
-          throw e;
-        }
-      }
-    } else if (this.state.hasL20nPlurals && !!this.traitLabels && !this.state.isRichModeEnabled) {
-      try {
-        const values = dumpL20nTraits(newValues, this.l20nUnitEntity);
-        this.setState({
-          values,
-          l20nValues: newValues,
-        }, () => this.props.onChange(values));
-      } catch (e) {
-        if (e.name === 'L20nEditorError') {
-          this.setState({ l20nValues: newValues });
-        } else {
-          throw e;
-        }
-      }
-    } else {
-      let newStateValue = value;
-      if (!this.state.isRichModeEnabled) {
-        newStateValue = dumpL20nValue(value);
-      }
-      this.setState({
-        values: [newStateValue],
-        l20nValues: [value],
-      }, () => this.props.onChange([newStateValue]));
-    }
+    this.l20nUnit.updateValue(i, value);
+    const values = [this.l20nUnit.value];
+    this.setState({
+      values,
+    }, () => this.props.onChange(values));
   },
 
   render() {
-    const targetNplurals = this.state.hasL20nPlurals ? this.l20nInitialValues.length : 1;
     const textareaComponent = this.state.isRichModeEnabled ? L20nCodeMirror
                                                            : this.props.textareaComponent;
     return (
@@ -235,9 +131,9 @@ const L20nEditorContainer = React.createClass({
         onChange={this.handleChange}
         sourceValues={this.props.sourceValues}
         style={this.props.style}
-        targetNplurals={targetNplurals}
+        targetNplurals={this.l20nInitialValues.length}
         textareaComponent={textareaComponent}
-        values={this.state.l20nValues}
+        values={this.l20nUnit.state.values}
       />
     );
   },
