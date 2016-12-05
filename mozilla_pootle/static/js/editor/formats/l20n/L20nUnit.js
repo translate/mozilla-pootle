@@ -74,13 +74,17 @@ class L20nUnitPluralsState extends L20nUnitState {
 
     for (let i = 0; i < variants.length; i++) {
       this.values.push(variants[i].value.source);
-      let key = FTLASTSerializer.dumpExpression(variants[i].key);
-      if (variants[i].default) {
-        key = `${key}, default`;
-      }
-      this.pluralForms.push(key);
+      this.pluralForms.push(this.extractPluralFormName(variants[i]));
     }
 
+  }
+
+  extractPluralFormName(variant) {
+    const key = FTLASTSerializer.dumpExpression(variant.key);
+    if (variant.default) {
+      return `${key}, default`;
+    }
+    return key;
   }
 
   getEditorState() {
