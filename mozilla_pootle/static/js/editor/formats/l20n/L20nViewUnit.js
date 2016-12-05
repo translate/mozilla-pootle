@@ -11,7 +11,7 @@ import React, { PropTypes } from 'react';
 import ViewUnit from 'pootle/editor/components/ViewUnit';
 
 import InnerPre from './InnerPre';
-import { getL20nData } from './utils';
+import L20nUnit from './L20nUnit';
 
 
 const L20nViewUnit = React.createClass({
@@ -28,39 +28,17 @@ const L20nViewUnit = React.createClass({
   },
 
   getPluralFormName(index) {
-    if (this.pluralForms !== undefined &&
-        this.pluralForms.length === this.state.values.length) {
-      return `[${this.pluralForms[index]}]`;
-    } else if (this.traitLabels !== undefined &&
-               this.traitLabels.length === this.state.values.length) {
-      return `[${this.traitLabels[index]}]`;
+    if (this.l20nUnit.state.getShortPluralFormName) {
+      return this.l20nUnit.state.getShortPluralFormName(index);
     }
+
     return `[${index}]`;
   },
 
   componentWillMount() {
-    const l20nData = getL20nData(this.props.values);
-
-    if (l20nData.hasL20nPlurals) {
-      this.pluralForms = l20nData.pluralForms;
-      this.setState({
-        values: l20nData.unitValues,
-        hasPlurals: true,
-      });
-    } else if (l20nData.hasL20nTraits) {
-      this.traitLabels = l20nData.traitLabels;
-      this.setState({
-        values: l20nData.unitValues,
-        hasPlurals: true,
-      });
-    } else if (l20nData.hasSimpleValue) {
-      this.setState({
-        values: l20nData.unitValues,
-      });
-    } else {
-      this.setState({
-        isRichModeEnabled: true,
-      });
+    this.l20nUnit = new L20nUnit(this.props.values[0]);
+    if (this.l20nUnit.state !== null) {
+      this.setState(this.l20nUnit.state.getEditorState());
     }
   },
 
