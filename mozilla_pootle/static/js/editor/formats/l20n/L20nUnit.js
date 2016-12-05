@@ -7,7 +7,7 @@
  */
 
 import { FTLASTParser, FTLASTSerializer, getPluralForms } from 'l20n';
-
+import L20nPluralFormHeader from './L20nPluralFormHeader';
 
 /*
     Tests can be run in plugin app environment where there is no installed
@@ -33,6 +33,10 @@ class L20nUnitState {
   constructor(l20nUnit) {
     this.l20nUnit = l20nUnit;
     this.values = [];
+  }
+
+  getEditorAreaHeaderProps(index) {
+    return null;
   }
 }
 
@@ -126,7 +130,43 @@ class L20nUnitPluralsState extends L20nUnitState {
 
   addVariant(pluralForm) {}
 
-  setDefault(i) {}
+  get variants() {
+    return this.l20nUnit.entity.value.elements[0].expressions[0].variants;
+  }
+
+  setDefault({index}) {
+    for (let i = 0; i < this.variants.length; i++ ) {
+      this.variants[i].default = (i === index);
+      this.pluralForms[i] = this.extractPluralFormName(this.variants[i]);
+    }
+  }
+
+  removePluralForm({index}) {
+    this.variants.splice(index, 1);
+    this.pluralForms.splice(index, 1);
+    this.values.splice(index, 1);
+  }
+
+  getEditingAreaHeaderComponent() {
+    return L20nPluralFormHeader;
+  }
+
+  getEditorAreaHeaderProps(index) {
+    const variants = this.l20nUnit.entity.value.elements[0].expressions[0].variants;
+    if (index < variants.length) {
+      return {
+        default: variants[index].default,
+      }
+    }
+  }
+
+  handleAction(action, params) {
+    try {
+      this[action](params.index);
+    } catch (e) {
+      return false;
+    }
+  }
 }
 
 
@@ -335,6 +375,11 @@ class L20nUnit {
     );
   }
 
+  handleStateAction(action, options, callback) {
+    this.state[action](options);
+    this.value = this.dump();
+    callback();
+  }
 }
 
 
