@@ -13,6 +13,7 @@ import SuggestionValue from 'pootle/editor/components/SuggestionValue';
 
 import InnerPre from './InnerPre';
 import { getL20nData } from './utils';
+import L20nUnit from './L20nUnit';
 
 
 const L20nSuggestionValue = React.createClass({
@@ -31,48 +32,19 @@ const L20nSuggestionValue = React.createClass({
   },
 
   getPluralFormName(index) {
-    if (this.pluralForms !== undefined &&
-        this.pluralForms.length === this.state.values.length) {
-      return `[${this.pluralForms[index]}]`;
-    } else if (this.traitLabels !== undefined &&
-               this.traitLabels.length === this.state.values.length) {
-      return `[${this.traitLabels[index]}]`;
+    if (this.l20nUnit.state.getShortPluralFormName) {
+      return this.l20nUnit.state.getShortPluralFormName(index);
     }
     return `[${index}]`;
   },
 
   componentWillMount() {
-    const l20nData = getL20nData(this.props.values);
-    const l20nInitialData = getL20nData(this.props.initialValues);
-    let values;
-    let initialValues;
-    let hasPlurals = false;
-
-    if (l20nInitialData.hasL20nPlurals || l20nData.hasL20nTraits || l20nData.hasSimpleValue) {
-      initialValues = l20nInitialData.unitValues;
-    }
-    if (l20nData.hasL20nPlurals) {
-      this.pluralForms = l20nData.pluralForms;
-      values = l20nData.unitValues;
-      hasPlurals = true;
-    } else if (l20nData.hasL20nTraits) {
-      this.traitLabels = l20nData.traitLabels;
-      values = l20nData.unitValues;
-      hasPlurals = true;
-    } else if (l20nData.hasSimpleValue) {
-      values = l20nData.unitValues;
-    } else {
-      this.setState({
-        isRichModeEnabled: true,
-      });
-    }
-
-    if (!!values) {
-      this.setState({
-        values: values,
-        initialValues: initialValues,
-        hasPlurals: hasPlurals,
-      });
+    this.l20nUnit = new L20nUnit(this.props.values[0]);
+    this.l20nInitialUnit = new L20nUnit(this.props.initialValues[0]);
+    if (this.l20nUnit.state !== null && this.l20nInitialUnit.state !== null) {
+      let state = this.l20nUnit.state.getEditorState();
+      state.initialValues = this.l20nInitialUnit.state.values;
+      this.setState(state);
     }
   },
 
