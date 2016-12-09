@@ -12,7 +12,6 @@ import { t } from 'pootle/shared/utils/i18n';
 import SuggestionValue from 'pootle/editor/components/SuggestionValue';
 
 import InnerPre from './InnerPre';
-import { getL20nData } from './utils';
 import L20nUnit from './L20nUnit';
 
 
