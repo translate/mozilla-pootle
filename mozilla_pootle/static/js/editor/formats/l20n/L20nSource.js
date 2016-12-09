@@ -73,24 +73,21 @@ const L20nSource = React.createClass({
     }
   },*/
 
-  getPluralFormName(index) {
-    if (this.l20nUnit.state.getPluralFormName) {
-      return this.l20nUnit.state.getPluralFormName(index);
-    }
-    return `[${index}]`;
-  },
-
   render() {
     const extraProps = {};
     if (this.state.isRichModeEnabled) {
       extraProps.innerComponent = InnerPre;
+    }
+    if (this.l20nUnit.state !== null) {
+      extraProps.labelComponent = this.l20nUnit.state.getVariantLabelComponent();
+      extraProps.getLabel = this.l20nUnit.state.ctx ?
+        (i) => this.l20nUnit.state.ctx.getTitle(i) : null;
     }
     return (
       <UnitSource
         {...this.props}
         {...this.state }
         {...extraProps}
-        getPluralFormName={this.getPluralFormName}
       />
     );
   },
