@@ -97,14 +97,6 @@ const L20nEditorContainer = React.createClass({
     return l20nUnit.state.values;
   },
 
-  getPluralFormName(index) {
-    if (this.l20nUnit.state.getPluralFormName) {
-      return this.l20nUnit.state.getPluralFormName(index);
-    }
-
-    return '';
-  },
-
   getStateValues() {
     return this.state.values;
   },
@@ -117,12 +109,17 @@ const L20nEditorContainer = React.createClass({
     }, () => this.props.onChange(values));
   },
 
+  getTextareaHeaderProps(valueIndex) {
+    return this.l20nUnit.state.getEditorAreaHeaderProps(valueIndex);
+  },
+
   render() {
     const textareaComponent = this.state.isRichModeEnabled ? L20nCodeMirror
                                                            : this.props.textareaComponent;
+    const editingAreaHeaderComponent = this.l20nUnit.state.getEditingAreaHeaderComponent();
+
     return (
       <this.props.editorComponent
-        getPluralFormName={this.getPluralFormName}
         hasL20nPlurals={this.state.hasL20nPlurals}
         initialValues={this.l20nInitialValues}
         isDisabled={this.props.isDisabled}
@@ -132,6 +129,8 @@ const L20nEditorContainer = React.createClass({
         sourceValues={this.props.sourceValues}
         style={this.props.style}
         targetNplurals={this.l20nInitialValues.length}
+        getTextareaHeaderProps={this.getTextareaHeaderProps}
+        textareaHeaderComponent={editingAreaHeaderComponent}
         textareaComponent={textareaComponent}
         values={this.l20nUnit.state.values}
       />
