@@ -113,6 +113,15 @@ const L20nEditorContainer = React.createClass({
     return this.l20nUnit.state.getEditorAreaHeaderProps(valueIndex);
   },
 
+  handleTextAreaHeaderAction(valueIndex, action) {
+    this.l20nUnit.handleStateAction(valueIndex, action, () => {
+      const values = [this.l20nUnit.value];
+      this.setState({
+        values,
+      }, () => this.props.onChange(values));
+    });
+  },
+
   render() {
     const textareaComponent = this.state.isRichModeEnabled ? L20nCodeMirror
                                                            : this.props.textareaComponent;
@@ -129,6 +138,7 @@ const L20nEditorContainer = React.createClass({
         sourceValues={this.props.sourceValues}
         style={this.props.style}
         targetNplurals={this.l20nInitialValues.length}
+        textareaHeaderActionCallback={this.handleTextAreaHeaderAction}
         getTextareaHeaderProps={this.getTextareaHeaderProps}
         textareaHeaderComponent={editingAreaHeaderComponent}
         textareaComponent={textareaComponent}
