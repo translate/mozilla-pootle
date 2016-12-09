@@ -27,14 +27,6 @@ const L20nViewUnit = React.createClass({
     };
   },
 
-  getPluralFormName(index) {
-    if (this.l20nUnit.state.getShortPluralFormName) {
-      return this.l20nUnit.state.getShortPluralFormName(index);
-    }
-
-    return `[${index}]`;
-  },
-
   componentWillMount() {
     this.l20nUnit = new L20nUnit(this.props.values[0]);
     if (this.l20nUnit.state !== null) {
@@ -47,13 +39,17 @@ const L20nViewUnit = React.createClass({
     if (this.state.isRichModeEnabled) {
       extraProps.innerComponent = InnerPre;
     }
+    if (this.l20nUnit.state !== null) {
+      extraProps.labelComponent = this.l20nUnit.state.getVariantLabelComponent();
+      extraProps.getLabel = this.l20nUnit.state.ctx ?
+        (i) => this.l20nUnit.state.ctx.getShortTitle(i) : null;
+    }
 
     return (
       <ViewUnit
         {...this.props}
         {...this.state }
         {...extraProps}
-        getPluralFormName={this.getPluralFormName}
       />
     );
   },
