@@ -1,0 +1,36 @@
+/*
+ * Copyright (C) Pootle contributors.
+ *
+ * This file is a part of the Pootle project. It is distributed under the GPL3
+ * or later license. See the LICENSE file for a copy of the license and the
+ * AUTHORS file for copyright and authorship information.
+ */
+
+.subheader
+{
+  display: inline-block;
+  width: 100%;
+}
+
+.subheader .title
+{
+  display: inline;
+}
+
+.subheader .menu
+{
+  float: right;
+  margin-right: 5px;
+}
+
+.subheader .menu a
+{
+  margin-left: 5px;
+}
+
+.subheader .menu .icon-reject-white,
+.subheader .menu .icon-add
+{
+  border-radius: 7px;
+  background-color: #ccc;
+}
