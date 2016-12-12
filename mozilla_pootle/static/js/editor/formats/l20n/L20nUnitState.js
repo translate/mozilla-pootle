@@ -180,6 +180,15 @@ class L20nUnitTraitsState extends L20nUnitState {
     }
   }
 
+  getEditorViewUnitState() {
+    const values = this.values.map((value, index) => ( this.traitLabels[index] !== 'xul/accesskey' ? value : null ));
+    return {
+      values,
+      hasPlurals: true,
+      isRichModeEnabled: false,
+    }
+  }
+
   setEmptyEntity(localeCode) {
     const resource = FTLASTParser.parseResource(`unit = ${getEmptyTraitsPattern(this.traitLabels)}`);
     this.l20nUnit.entity = resource[0].body[0];

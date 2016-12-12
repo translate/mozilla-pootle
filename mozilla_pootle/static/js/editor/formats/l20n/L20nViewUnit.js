@@ -30,7 +30,7 @@ const L20nViewUnit = React.createClass({
   componentWillMount() {
     this.l20nUnit = new L20nUnit(this.props.values[0]);
     if (this.l20nUnit.state !== null) {
-      this.setState(this.l20nUnit.state.getEditorState());
+      this.setState(this.l20nUnit.state.getEditorViewUnitState());
     }
   },
 
