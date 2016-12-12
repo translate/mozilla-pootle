@@ -11,6 +11,7 @@ import { FTLASTParser, FTLASTSerializer } from 'l20n';
 import L20nEditorVariantHeader from './L20nEditorVariantHeader';
 import L20nEditorVariantLabel from './L20nEditorVariantLabel';
 import L20nPluralFormHeader from './L20nPluralFormHeader';
+import { PluralsContext, createTraitsContextClass } from './L20nVariantContext';
 
 
 class L20nUnitState {
@@ -84,6 +85,8 @@ class L20nUnitPluralsState extends L20nUnitState {
       this.values.push(variants[i].value.source);
       this.pluralForms.push(this.extractPluralFormName(variants[i]));
     }
+
+    this.ctx = new PluralsContext(this.pluralForms);
   }
 
   extractPluralFormName(variant) {
@@ -100,6 +103,7 @@ class L20nUnitPluralsState extends L20nUnitState {
 
   setEmptyEntity(localeCode) {
     this.pluralForms = gatherPluralForms(localeCode, this.pluralForms);
+    this.ctx.update(this.pluralForms);
     const resource = FTLASTParser.parseResource(`unit = ${getEmptySelectorPattern(this.pluralForms)}`);
     this.l20nUnit.entity = resource[0].body[0];
     this.values = new Array(this.pluralForms.length).fill('');
@@ -126,11 +130,13 @@ class L20nUnitPluralsState extends L20nUnitState {
       this.variants[i].default = (i === index);
       this.pluralForms[i] = this.extractPluralFormName(this.variants[i]);
     }
+    this.ctx.update(this.pluralForms);
   }
 
   removePluralForm(index) {
     this.variants.splice(index, 1);
     this.pluralForms.splice(index, 1);
+    this.ctx.update(this.pluralForms);
     this.values.splice(index, 1);
   }
 
@@ -138,7 +144,7 @@ class L20nUnitPluralsState extends L20nUnitState {
     if (index < this.variants.length) {
       return {
         default: this.variants[index].default,
-        title: `[${this.pluralForms[index]}]`,
+        title: this.ctx.getTitle(index),
       }
     }
   }
@@ -162,6 +168,8 @@ class L20nUnitTraitsState extends L20nUnitState {
       let key = FTLASTSerializer.dumpExpression(traits[i].key);
       this.traitLabels.push(key);
     }
+
+    this.ctx = createTraitsContextClass(this.traitLabels);
   }
 
   getEditorState() {
@@ -191,7 +199,7 @@ class L20nUnitTraitsState extends L20nUnitState {
   getEditorAreaHeaderProps(index) {
     if (index < this.traitLabels.length) {
       return {
-        title: `[${this.traitLabels[index]}]`,
+        title: this.ctx.getTitle(index),
       }
     }
   }
