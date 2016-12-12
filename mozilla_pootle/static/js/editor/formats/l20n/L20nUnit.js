@@ -141,6 +141,11 @@ class L20nUnit {
     );
   }
 
+  handleStateAction(valueIndex, action, callback) {
+    this.state[action](valueIndex);
+    this.value = this.dump();
+    callback();
+  }
 }
 
 

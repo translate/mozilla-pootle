@@ -9,6 +9,7 @@
 import { FTLASTParser, FTLASTSerializer } from 'l20n';
 
 import L20nEditorVariantHeader from './L20nEditorVariantHeader';
+import L20nPluralFormHeader from './L20nPluralFormHeader';
 
 
 /*
@@ -127,6 +128,19 @@ class L20nUnitPluralsState extends L20nUnitState {
     return this.l20nUnit.entity.value.elements[0].expressions[0].variants;
   }
 
+  setDefault(index) {
+    for (let i = 0; i < this.variants.length; i++ ) {
+      this.variants[i].default = (i === index);
+      this.pluralForms[i] = this.extractPluralFormName(this.variants[i]);
+    }
+  }
+
+  removePluralForm(index) {
+    this.variants.splice(index, 1);
+    this.pluralForms.splice(index, 1);
+    this.values.splice(index, 1);
+  }
+
   getEditorAreaHeaderProps(index) {
     if (index < this.variants.length) {
       return {
@@ -135,6 +149,11 @@ class L20nUnitPluralsState extends L20nUnitState {
       }
     }
   }
+
+  getEditingAreaHeaderComponent() {
+    return L20nPluralFormHeader;
+  }
+
 }
 
 
