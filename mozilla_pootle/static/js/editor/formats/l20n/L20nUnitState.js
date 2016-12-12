@@ -9,6 +9,7 @@
 import { FTLASTParser, FTLASTSerializer } from 'l20n';
 
 import L20nEditorVariantHeader from './L20nEditorVariantHeader';
+import L20nEditorVariantLabel from './L20nEditorVariantLabel';
 import L20nPluralFormHeader from './L20nPluralFormHeader';
 
 
@@ -24,6 +25,10 @@ class L20nUnitState {
 
   getEditingAreaHeaderComponent() {
     return L20nEditorVariantHeader;
+  }
+
+  getVariantLabelComponent() {
+    return L20nEditorVariantLabel;
   }
 
   getEditorState() {
