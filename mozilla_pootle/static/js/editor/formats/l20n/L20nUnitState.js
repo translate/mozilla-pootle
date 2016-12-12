@@ -12,18 +12,6 @@ import L20nEditorVariantHeader from './L20nEditorVariantHeader';
 import L20nPluralFormHeader from './L20nPluralFormHeader';
 
 
-/*
-    Tests can be run in plugin app environment where there is no installed
-    dependencies from the main Pootle. Import fake `t` for tests.
-*/
-let t;
-try {
-  t = require('pootle/shared/utils/i18n').t;
-} catch (e) {
-  t = (value, ctx) => (interpolate(value, ctx, true));
-}
-
-
 class L20nUnitState {
   constructor(l20nUnit) {
     this.l20nUnit = l20nUnit;
